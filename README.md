@@ -37,3 +37,9 @@ cd sentiment-analysis-moscow
 # Должны быть файлы: config.json, pytorch_model.bin, tokenizer.json
 
 docker-compose up --build
+
+
+После запуска:
+
+🖥️ Веб-интерфейс: http://localhost:8501
+📡 API (Swagger): http://localhost:8000/docs
