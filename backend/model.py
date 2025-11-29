@@ -16,7 +16,7 @@ class SentimentModel:
                 return_tensors="pt",
                 padding=True,
                 truncation=True,
-                max_length=512
+                max_length=128
             ).to(self.device)
             logits = self.model(**inputs).logits
             preds = torch.argmax(logits, dim=-1).cpu().numpy()
