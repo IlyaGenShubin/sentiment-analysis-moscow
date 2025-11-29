@@ -25,7 +25,7 @@
 
 ## 🛠️ Технологии
 
-- **Модель**: `DeepPavlov/rubert-base-cased` (или `cointegrated/rubert-tiny2`)
+- **Модель**: cointegrated/rubert-tiny2
 - **Backend**: FastAPI + PyTorch + Transformers
 - **Frontend**: Streamlit
 - **Развёртывание**: Docker Compose
