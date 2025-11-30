@@ -29,12 +29,13 @@ st.title("🔍 Анализ тональности отзывов горожан
 uploaded_file = st.file_uploader("Загрузите CSV с колонкой 'text'", type="csv")
 
 if uploaded_file and 'result_df' not in st.session_state:
+    file_bytes = uploaded_file.getvalue()
     with st.spinner("Анализирую тексты... (может занять до 60–90 сек для большой модели)"):
         try:
-            # Увеличенный таймаут для "холодного" запуска модели
+            # Правильная отправка файла как байтов
             response = session.post(
                 f"{BACKEND_URL}/predict",
-                files={"file": uploaded_file},
+                files={"file": ("input.csv", file_bytes, "text/csv")},
                 timeout=180
             )
             if response.status_code == 200:
@@ -63,7 +64,7 @@ if 'result_df' in st.session_state:
     labels = st.multiselect(
         "Фильтр по тональности",
         options=[0, 1, 2],
-        format_func={0: "Negative", 1: "Neutral", 2: "Positive"}.get
+        format_func={0: "Отрицательная", 1: "Нейтральная", 2: "Положительная"}.get
     )
     if labels:
         df = df[df['label'].isin(labels)]
@@ -91,23 +92,40 @@ if 'result_df' in st.session_state:
     # Применение изменений
     if not df.equals(edited_df):
         full_df = st.session_state.result_df
-        for idx, row in edited_df.iterrows():
-            orig_idx = df.index[df.index == idx][0]  # сохраняем исходный индекс
-            full_df.at[orig_idx, 'label'] = row['label']
+        for idx in edited_df.index:
+            full_df.at[idx, 'label'] = edited_df.loc[idx, 'label']
         st.session_state.result_df = full_df
         st.session_state.edited = True
         st.success("✅ Изменения сохранены!")
 
-    # Визуализация
+    # Визуализация: замена легенды на текстовые названия
     st.subheader("📊 Распределение тональности")
+
+    # Маппинг чисел → текст для легенды
+    label_map = {0: "Отрицательная", 1: "Нейтральная", 2: "Положительная"}
+    viz_df = edited_df.copy()
+    viz_df['Тональность'] = viz_df['label'].map(label_map)
+
+    color_map = {
+        "Отрицательная": "red",
+        "Нейтральная": "gray",
+        "Положительная": "green"
+    }
+
     fig = px.histogram(
-        edited_df,
-        x='label',
-        category_orders={"label": [0, 1, 2]},
-        labels={"label": "Класс"},
-        color='label',
-        color_discrete_map={0: 'red', 1: 'gray', 2: 'green'}
+        viz_df,
+        x='label',  # ось X остаётся числовой: 0, 1, 2
+        color='Тональность',  # легенда — текстовая
+        category_orders={
+            "Тональность": ["Отрицательная", "Нейтральная", "Положительная"]
+        },
+        labels={
+            "label": "Класс",
+            "Тональность": "Тональность"
+        },
+        color_discrete_map=color_map
     )
+    fig.update_layout(legend_title_text="Тональность")
     st.plotly_chart(fig, use_container_width=True)
 
     # Экспорт
