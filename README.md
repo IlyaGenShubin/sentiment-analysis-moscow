@@ -81,7 +81,9 @@ sentiment-analysis-moscow/
     └── vocab.txt
 ```
 
-> 💡 Папка `model/` **не входит в репозиторий** (добавьте в `.gitignore`).
+> 💡 Папка `model/` **не входит в репозиторий**
+
+(ссылка на модель https://drive.google.com/drive/folders/1oKvowZpHsrTgovqi8hkVdhCmoMUXoQtO?usp=share_link).
 
 ---
 
