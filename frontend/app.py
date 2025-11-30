@@ -30,7 +30,7 @@ uploaded_file = st.file_uploader("Загрузите CSV с колонкой 'te
 
 if uploaded_file and 'result_df' not in st.session_state:
     file_bytes = uploaded_file.getvalue()
-    with st.spinner("Анализирую тексты... (может занять до 60–90 сек для большой модели)"):
+    with st.spinner("Анализирую тексты... (может занять до 60–90 сек.)"):
         try:
             # Правильная отправка файла как байтов
             response = session.post(
